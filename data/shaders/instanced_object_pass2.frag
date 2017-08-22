@@ -44,7 +44,10 @@ void main(void)
         col = vec4(new_color.r, new_color.g, new_color.b, col.a);
     }
 
+#if !defined(Advanced_Lighting_Enabled)
+    col.xyz *= color.xyz;
+#else
     col.xyz *= pow(color.xyz, vec3(2.2));
-
+#endif
     FragColor = vec4(getLightFactor(col.xyz, vec3(1.), specmap, emitmap) , 1.);
 }

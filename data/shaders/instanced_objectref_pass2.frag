@@ -32,8 +32,13 @@ void main(void)
     float emitmap = texture(SpecMap, uv).b;
     float mask = texture(colorization_mask, uv).a;
 #endif
-    col.xyz *= pow(color.xyz, vec3(2.2));
     if (col.a * color.a < 0.5) discard;
+
+#if !defined(Advanced_Lighting_Enabled)
+    col.xyz *= color.xyz;
+#else
+    col.xyz *= pow(color.xyz, vec3(2.2));
+#endif
 
     if (color_change.x > 0.0)
     {

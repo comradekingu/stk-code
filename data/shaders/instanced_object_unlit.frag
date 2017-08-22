@@ -20,7 +20,13 @@ void main(void)
 #else
     vec4 col = texture(tex, uv);
 #endif
-    col.xyz *= pow(color.xyz, vec3(2.2));
     if (col.a < 0.5) discard;
+    
+#if !defined(Advanced_Lighting_Enabled)
+    col.xyz *= color.xyz;
+#else
+    col.xyz *= pow(color.xyz, vec3(2.2));
+#endif
+
     FragColor = vec4(col.xyz, 1.);
 }

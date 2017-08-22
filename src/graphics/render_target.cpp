@@ -147,13 +147,10 @@ void GL3RenderTarget::draw2DImage(const irr::core::rect<s32>& dest_rect,
     assert(m_frame_buffer != NULL);
     irr::core::rect<s32> source_rect(0, 0, m_frame_buffer->getWidth(),
                                      m_frame_buffer->getHeight());
-    glEnable(GL_FRAMEBUFFER_SRGB);
     draw2DImageFromRTT(m_frame_buffer->getRTT()[0],
                        m_frame_buffer->getWidth(), m_frame_buffer->getHeight(),
                        dest_rect, source_rect,
                        clip_rect, colors, use_alpha_channel_of_texture);
-    glDisable(GL_FRAMEBUFFER_SRGB);
-
 }   // draw2DImage
 
 #endif   // !SERVER_ONLY

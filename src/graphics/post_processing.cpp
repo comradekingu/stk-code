@@ -1573,11 +1573,6 @@ FrameBuffer *PostProcessing::render(scene::ICameraSceneNode * const camnode,
         PROFILER_POP_CPU_MARKER();
     }
 
-    // Workaround a bug with srgb fbo on sandy bridge windows
-    if (GraphicsRestrictions::isDisabled(GraphicsRestrictions::GR_FRAMEBUFFER_SRGB_WORKING))
-        return in_fbo;
-
-    glEnable(GL_FRAMEBUFFER_SRGB);
     out_fbo = &rtts->getFBO(FBO_MLAA_COLORS);
     out_fbo->bind();
     renderPassThrough(in_fbo->getRTT()[0],
@@ -1593,7 +1588,6 @@ FrameBuffer *PostProcessing::render(scene::ICameraSceneNode * const camnode,
                   *out_fbo);
         PROFILER_POP_CPU_MARKER();
     }
-    glDisable(GL_FRAMEBUFFER_SRGB);
 
     return out_fbo;
 }   // render

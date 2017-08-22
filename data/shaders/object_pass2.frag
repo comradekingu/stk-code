@@ -40,7 +40,7 @@ void main(void)
         col = vec4(new_color.r, new_color.g, new_color.b, col.a);
     }
 
-#if defined(GL_ES) && !defined(Advanced_Lighting_Enabled)
+#if !defined(Advanced_Lighting_Enabled)
     col.xyz *= color.xyz;
 #else
     col.xyz *= pow(color.xyz, vec3(2.2));

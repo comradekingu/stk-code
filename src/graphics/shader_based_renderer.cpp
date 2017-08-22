@@ -307,8 +307,6 @@ void ShaderBasedRenderer::renderScene(scene::ICameraSceneNode * const camnode,
     else
     {
         // We need a cleared depth buffer for some effect (eg particles depth blending)
-        if (GraphicsRestrictions::isDisabled(GraphicsRestrictions::GR_FRAMEBUFFER_SRGB_WORKING))
-            glDisable(GL_FRAMEBUFFER_SRGB);
         m_rtts->getFBO(FBO_NORMAL_AND_DEPTHS).bind();
         // Bind() modifies the viewport. In order not to affect anything else,
         // the viewport is just reset here and not removed in Bind().
@@ -318,8 +316,6 @@ void ShaderBasedRenderer::renderScene(scene::ICameraSceneNode * const camnode,
                    vp.LowerRightCorner.X - vp.UpperLeftCorner.X,
                    vp.LowerRightCorner.Y - vp.UpperLeftCorner.Y);
         glClear(GL_DEPTH_BUFFER_BIT);
-        if (GraphicsRestrictions::isDisabled(GraphicsRestrictions::GR_FRAMEBUFFER_SRGB_WORKING))
-            glEnable(GL_FRAMEBUFFER_SRGB);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     PROFILER_POP_CPU_MARKER();
@@ -493,7 +489,6 @@ void ShaderBasedRenderer::renderScene(scene::ICameraSceneNode * const camnode,
     }
     if (!CVS->isDefferedEnabled() && !forceRTT)
     {
-        glDisable(GL_FRAMEBUFFER_SRGB);
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
         return;
@@ -599,11 +594,9 @@ void ShaderBasedRenderer::renderPostProcessing(Camera * const camera)
     }
     else
     {
-        glEnable(GL_FRAMEBUFFER_SRGB);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         camera->activate();
         m_post_processing->renderPassThrough(fbo->getRTT()[0], viewport.LowerRightCorner.X - viewport.UpperLeftCorner.X, viewport.LowerRightCorner.Y - viewport.UpperLeftCorner.Y);
-        glDisable(GL_FRAMEBUFFER_SRGB);
     }
 } //renderPostProcessing
 
@@ -803,9 +796,6 @@ void ShaderBasedRenderer::render(float dt)
         rg->preRenderCallback(camera);   // adjusts start referee
         irr_driver->getSceneManager()->setActiveCamera(camnode);
 
-        if (!CVS->isDefferedEnabled())
-            glEnable(GL_FRAMEBUFFER_SRGB);
-        
         PROFILER_PUSH_CPU_MARKER("Update Light Info", 0xFF, 0x0, 0x0);
         m_lighting_passes.updateLightsInfo(camnode, dt);
         PROFILER_POP_CPU_MARKER();
@@ -955,9 +945,7 @@ void ShaderBasedRenderer::preloadShaderFiles()
     sfm->addShaderFile("coloredquad.frag", GL_FRAGMENT_SHADER);
     sfm->addShaderFile("screenquad.vert", GL_VERTEX_SHADER);
     sfm->addShaderFile("tonemap.frag", GL_FRAGMENT_SHADER);
-    if (!GraphicsRestrictions::isDisabled
-        (GraphicsRestrictions::GR_FRAMEBUFFER_SRGB_WORKING))
-        sfm->addShaderFile("passthrough.frag", GL_FRAGMENT_SHADER);
+    sfm->addShaderFile("passthrough.frag", GL_FRAGMENT_SHADER);
 
     sfm->addShaderFile("billboard.vert", GL_VERTEX_SHADER);
     sfm->addShaderFile("billboard.frag", GL_FRAGMENT_SHADER);
